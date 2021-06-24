@@ -1,9 +1,9 @@
-const express = require('express')
-const router = express.Router()
-const userService = require('../../../services/user')
-const validate = require('validator')
-const UniversalError = require('../../../error/UniversalError')
-const withAuth = require('../middlewares/withAuth')
+const express = require('express');
+const router = express.Router();
+const userService = require('../../../services/user');
+const validate = require('validator');
+const withAuth = require('../middleware/withAuth');
+
 
 router.post('/register', async (req, res, next) => {
     try {
@@ -93,11 +93,21 @@ router.post('/logout', withAuth, async (req, res) => {
 })
 router.get('/data', withAuth, async (req, res) => {
     try {
-        const result = await userService.getResult(accesstoken)
+        const result = await userService.getUser(accesstoken)
         res.json(result)
     }
     catch (error) {
         error
     }
 })
+router.post('/loginWithFb', async (req, res, next) => {
+    const user = await userService.loginFB(req.headers.authorization);
+    await res.json(user);
+})
+router.post('/loginWithGG', async (req, res, next) => {
+    const user = await userService.loginGG(req.headers.authorization);
+    await res.json(user);
+})
+
+
 module.exports = router

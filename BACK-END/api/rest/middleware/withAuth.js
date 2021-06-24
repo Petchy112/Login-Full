@@ -1,4 +1,3 @@
-const { ExpressRequest } = require('express')
 const userAuth = require('../../../models/userAuthModel')
 const user = require('../../../models/userModel')
 

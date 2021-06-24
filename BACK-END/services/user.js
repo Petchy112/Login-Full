@@ -1,20 +1,19 @@
-const User = require('../models/userModel')
-const UniversalError = require('../error/UniversalError');
+const user = require('../models/userModel')
 const jwt = require('jsonwebtoken');
 const config = require('../config');
 const userAuthToken = require('../models/userAuthModel')
 
-const thisService = {
+const userService = {
     async register(input) {
         console.log('register called', input)
 
-        const user = new User();
-        user.userName = input.userName,
-            user.passwordHash = sha1(input.password),
-            user.firstName = input.firstName,
-            user.lastName = input.lastName,
-            user.email = input.email,
-            user.phoneNumber = input.phoneNumber
+        const userdata = new user();
+        userdata.userName = input.userName,
+            userdata.passwordHash = sha1(input.password),
+            userdata.firstName = input.firstName,
+            userdata.lastName = input.lastName,
+            userdata.email = input.email,
+            userdata.phoneNumber = input.phoneNumber
 
 
         var isExistEmail = await User.findOne({ email: input.email })
@@ -86,19 +85,69 @@ const thisService = {
         console.log('get data', accessToken)
         const userTokenData = userAuthToken.findOne({ accessToken })
         if (userTokenData) {
-            const userData = User.findOne({ userName: userTokenData.userName })
+            const userData = user.findOne({ userName: userTokenData.userName })
             if (userData) {
                 const result = {
-                    firstName = userData.firstName,
-                    lastName = userData.lastName,
-                    email = userData.email,
-                    phoneNumber = userData.phoneNumber
+                    firstName: userData.firstName,
+                    lastName: userData.lastName,
+                    email: userData.email,
+                    phoneNumber: userData.phoneNumber
                 }
                 return result
             }
         }
-    }
+    },
+    async loginFB(userID) {
+        console.log('facebookLogin called', userID);
+        const data = await FB.api('/me', {
+            field: ['id', 'email', 'first_name', 'last_name'].join(','), userId: userID
+        })
+        const fbUserData = new user();
+        fbUserData.userId = userID,
+            fbUserData.userName = data.email,
+            fbUserData.firstName = data.first_name,
+            fbUserData.lastName = data.last_name,
+            fbUserData.email = data.email
+
+        var isUserId = await user.findOne({ userId: userID })
+        if (!isUserId) {
+            await fbUserData.save();
+        }
+        const accessTokenExpiresAt = new Date()
+        const signOptionsAccessToken = {
+            ...config.session.JWT,
+            expiresIn: config.auth.expiresIn.accessToken
+        }
+        const payloadAccessToken = {
+            userName: data.email,
+            firstName: data.first_name,
+            lastName: data.last_name,
+            email: data.email
+        }
+
+        const expiresIn = config.auth.expires.accessToken;
+        accessTokenExpiresAt.setSeconds(accessTokenExpiresAt.getSeconds() + expiresIn)
+
+
+        const accessToken = jwt.sign(payloadAccessToken, 'secret', signOptionsAccessToken)
+
+        const UserAuth = new userAuthToken()
+        UserAuth.userName = userName
+        UserAuth.accessToken = accessToken
+        UserAuth.accessTokenExpiresAt = accessTokenExpiresAt
+        await UserAuth.save()
+
+        dataResponse = {
+            message: 'Auth Successful',
+            id: userID
+        }
+        return dataResponse
+    },
+    async loginGG(idToken) {
+
+    },
 }
 
 
-module.exports = thisService
+
+module.exports = userService

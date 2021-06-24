@@ -1,5 +1,5 @@
 const user = require('./user')
 
-exports = app => {
+module.exports = app => {
     app.use('/api', user)
 }

@@ -5,12 +5,12 @@ const config = require('../../config');
 const routes = require('./router/index')
 
 
-app.use(cors())
+app.use(cors());
 
 
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
-routes(app)
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+routes(app);
 
 app.use((error, req, res, next) => {
     if (error.message === 'nothing') {
@@ -25,7 +25,7 @@ app.use((error, req, res, next) => {
         return
     }
     throw error
-})
+});
 
-console.log(`Starting with port ${config.port}`)
-app.listen(config.port, () => { `Server on port ${config.port}` })
+console.log(`Starting with port ${config.port}`);
+app.listen(config.port, () => { `Server on port ${config.port}` });

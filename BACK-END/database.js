@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-exports = async () => {
+module.exports = async () => {
     let connectionValue;
     try {
         connectionValue = `mongodb+srv://${config.database.username}:${config.database.password}@${config.database.host}/${config.database.database}`
