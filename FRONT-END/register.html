@@ -30,7 +30,7 @@
 
     <div>
         <p></p>
-        <button onclick="location.href='/api/start',register()" type="submit">Register</button> <button
+        <button onclick=register()" type="submit">Register</button> <button onclick="location.href='/api/start'"
             type="cancel">Cancel</button>
     </div>
 </body>
@@ -54,7 +54,7 @@
             method: 'POST',
             headers: myHeaders,
             body: raw,
-            redirect: 'follow'
+            redirect: '/api/start'
         };
 
         fetch("http://localhost:80/api/register", requestOptions)

@@ -28,9 +28,10 @@
 
     <div class="fb-login-button" data-width="300" data-size="large" data-button-type="continue_with"
         data-layout="default" data-auto-logout-link="false" data-use-continue-as="false" scope="public_profile,email"
-        onclick="callFB()"></div>
+        onlogin="callFB" data-onsuccess="location.href='/api/routeProfile'"></div>
     <br><br>
-    <div class="g-signin2" data-width="300" data-longtitle="true" data-onsuccess="callGG"></div>
+    <div class="g-signin2" data-width="300" data-longtitle="true" data-onsuccess="callGG"
+        data-onsuccess="location.href='/api/routeProfile'"></div>
 
     <p onClick="location.href='/api/registerForm'">or Sign up?
 </body>
@@ -43,12 +44,12 @@
             version: 'v11.0'
         });
     };
-    window.gapi.load("client:auth2", () => {
+    window.gapi.load("client:auth2") = function () {
         window.gapi.client.init({
             clientId: "871927269871-tag50bhnoj696jpbc2fdhojp1ha7uqka.apps.googleusercontent.com",
             scope: "profile",
         })
-    });
+    };
 
     async function getUser() {
 
@@ -80,11 +81,11 @@
                 method: 'POST',
                 headers: {
                     authorization: response.authResponse.accessToken,
-                    content: response.authResponse.userID
+                    userId: response.authResponse.userID,
+                    type: response.authResponse.graphDomain
                 }
             })
         }
-        throw err;
     }
 
     async function callGG(googleUser) {
@@ -92,7 +93,8 @@
         const data = await fetch("http://localhost:80/api/loginWithGG", {
             method: 'POST',
             headers: {
-                authorization: profile.id_token
+                authorization: profile.id_token,
+                type: profile.idpId
             }
         })
     }
