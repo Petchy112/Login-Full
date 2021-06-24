@@ -33,6 +33,10 @@ const userService = {
             return dataRes
         }
         await userdata.save();
+        var dataRes = {
+            Message: 'Login successfully'
+        }
+        return dataRes
 
     },
     async login(userName, password) {
@@ -64,28 +68,29 @@ const userService = {
             const accessToken = jwt.sign(payloadAccessToken, 'secret', signOptionsAccessToken)
 
             const UserAuth = new userAuthToken()
+            UserAuth.userId = thisUser.id
             UserAuth.userName = userName
             UserAuth.accessToken = accessToken
             UserAuth.accessTokenExpiresAt = accessTokenExpiresAt
             await UserAuth.save()
 
-            resData = {
-                Message: 'Auth Successful', token: accessToken
+            dataRes = {
+                Message: 'Login successfully'
             }
-            return resData
+            return dataRes
         }
         else {
-            console.log({ Message: 'Username was invalid' })
-            return Error
+            dataRes = { Message: 'Username was invalid' }
+            return dataRes
         }
     },
     async revokeAccessToken(accessToken) {
         console.log('revoke called', accessToken);
         await userAuthToken.findOneAndDelete({ accessToken })
-        const res = {
+        const dataRes = {
             message: 'logged out!',
         }
-        return res
+        return dataRes
     },
     async getUser(accessToken) {
         console.log('get data', accessToken)
@@ -94,6 +99,7 @@ const userService = {
             const userData = user.findOne({ userName: userTokenData.userName })
             if (userData) {
                 const result = {
+                    userName: userData.userName,
                     firstName: userData.firstName,
                     lastName: userData.lastName,
                     email: userData.email,
@@ -147,7 +153,7 @@ const userService = {
         }
 
         dataResponse = {
-            message: 'Auth Successful',
+            message: 'Login successfully',
             id: userID
         }
         return dataResponse
@@ -162,13 +168,43 @@ const userService = {
         const payload = ticket.getPayload();
 
         const googleUser = new user();
-        googleUser.userName = payload.given_name,
+        googleUser.userId = payload.sub,
+            googleUser.userName = payload.email,
             googleUser.firstName = payload.given_name,
             googleUser.lastName = payload.family_name,
             googleUser.email = payload.email
-        await googleUser.save()
+
+        var userId = payload.sub
+        const accessTokenExpiresAt = new Date()
+        const signOptionsAccessToken = {
+            ...config.session.JWT,
+            expiresIn: config.auth.expiresIn.accessToken
+        }
+        const payloadAccessToken = {
+            firstName: payload.given_name,
+            lastName: payload.family_name,
+            email: payload.email
+        }
+
+        const expiresIn = config.auth.expiresIn.accessToken;
+        accessTokenExpiresAt.setSeconds(accessTokenExpiresAt.getSeconds() + expiresIn)
+
+
+        const accessToken = jwt.sign(payloadAccessToken, 'secret', signOptionsAccessToken)
+
+
+        const userAuth = new userAuthToken()
+        userAuth.userId = userId
+        userAuth.accessToken = accessToken
+        userAuth.accessTokenExpiresAt = accessTokenExpiresAt
+        await userAuth.save();
+
+        var isUserId = await user.findOne({ userId })
+        if (!isUserId) {
+            await googleUser.save()
+        }
         resData = {
-            Message: 'Auth Successful'
+            Message: 'Login successfully'
         }
         return resData
 
