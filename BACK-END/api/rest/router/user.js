@@ -22,6 +22,14 @@ router.get('/registerForm', async (req, res) => {
         console.log(error)
     }
 })
+router.get('/routeProfile', async (req, res) => {
+    try {
+        await res.sendFile(path.join(__dirname, "../../../../", 'FRONT-END/profile.html'));
+    }
+    catch (error) {
+        res.send(error)
+    }
+})
 router.post('/register', async (req, res, next) => {
     try {
         var { body } = req
@@ -29,7 +37,7 @@ router.post('/register', async (req, res, next) => {
         if (!body.userName) {
             //errors.addError('empty/userName','Username was empty.');
             await res.json('Username was empty.');
-            next(error)
+            return
         }
         else if (!body.password) {
             //errors.addError('empty/userName','Password was empty.');
@@ -76,7 +84,7 @@ router.post('/register', async (req, res, next) => {
         // }
 
         const user = await userService.register(body)
-        res.json({ Message: 'Done' }).status(201)
+        res.json(user)
     }
     catch (error) {
         next(error);
@@ -124,7 +132,6 @@ router.post('/loginWithFb', async (req, res, next) => {
     await res.json(user);
 })
 router.post('/loginWithGG', async (req, res, next) => {
-    console.log(req.headers)
     const user = await userService.loginGG(req.headers.authorization);
     await res.json(user);
 })
