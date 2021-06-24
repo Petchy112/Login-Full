@@ -22,12 +22,14 @@
     <input type="text" id="userName" name="userName" required><br>
     <label for="pwd">Password</label><br>
     <input type="password" id="password" name="password" required><br><br>
-    <button onclick="location.href='/api/registerForm',getUser()" type="submit" value="Login">submit</button>
-    <br>
+    <button onclick="location.href='/api/routeProfile',getUser()" type="submit" value="Login">submit</button>
+
+    <br><br>
 
     <div class="fb-login-button" data-width="300" data-size="large" data-button-type="continue_with"
         data-layout="default" data-auto-logout-link="false" data-use-continue-as="false" scope="public_profile,email"
-        onclick="callFB"></div>
+        onclick="callFB()"></div>
+    <br><br>
     <div class="g-signin2" data-width="300" data-longtitle="true" data-onsuccess="callGG"></div>
 
     <p onClick="location.href='/api/registerForm'">or Sign up?
@@ -71,7 +73,6 @@
             .catch(error => console.log('error', error));
     }
 
-
     async function callFB(response) {
         if (response.status == 'connected') {
             console.log(response)
@@ -85,7 +86,6 @@
         }
         throw err;
     }
-
 
     async function callGG(googleUser) {
         var profile = await googleUser.getAuthResponse();
