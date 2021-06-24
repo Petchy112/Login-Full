@@ -8,7 +8,7 @@ var schema = mongoose.Schema({
         type: String,
         require: true,
     },
-    accessTokenExpireAt: {
+    accessTokenExpiresAt: {
         type: String,
         require: true
     }
