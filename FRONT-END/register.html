@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+</head>
+
+<style>
+
+</style>
+
+<body>
+
+    Username :<input type="text" id="userName" required>
+    <br><br>
+    Password : <input type="password" id="password" required>
+    <br><br>
+    Confirm Password :<input type="password" id="confirmPassword" required>
+    <br><br>
+    Firstname : <input type="text" id="firstName" required>
+    <br><br>
+    LastName : <input type="text" id="lastName" required>
+    <br><br>
+    Phone : <input type="tel" id="phoneNumber">
+    <br><br>
+    Email : <input type="email" id="email" required>
+
+    <div>
+        <p></p>
+        <button onclick="register()" type="submit">Register</button> <button type="cancel">Cancel</button>
+    </div>
+</body>
+
+<script>
+    async function register() {
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+
+        var raw = JSON.stringify({
+            "userName": document.getElementById('userName').value,
+            "password": document.getElementById('password').value,
+            "confirmPassword": document.getElementById('confirmPassword').value,
+            "firstName": document.getElementById('firstName').value,
+            "lastName": document.getElementById('lastName').value,
+            "phoneNumber": document.getElementById('phoneNumber').value,
+            "email": document.getElementById('email').value
+        });
+        console.log(raw);
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+        };
+
+        fetch("http://localhost:80/api/register", requestOptions)
+            .then(response => response.text())
+            .then(result => console.log(result))
+            .catch(error => console.log('error', error));
+    }
+</script>
+
+</html>

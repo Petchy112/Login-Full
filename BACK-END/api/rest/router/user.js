@@ -3,8 +3,25 @@ const router = express.Router();
 const userService = require('../../../services/user');
 const validate = require('validator');
 const withAuth = require('../middleware/withAuth');
+const path = require('path')
 
 
+router.get('/start', async (req, res) => {
+    try {
+        await res.sendFile(path.join(__dirname, "../../../../", 'FRONT-END/index.html'));
+    }
+    catch (error) {
+        console.log(error)
+    }
+})
+router.get('/registerForm', async (req, res) => {
+    try {
+        await res.sendFile(path.join(__dirname, "../../../../", 'FRONT-END/register.html'));
+    }
+    catch (error) {
+        console.log(error)
+    }
+})
 router.post('/register', async (req, res, next) => {
     try {
         var { body } = req
@@ -68,6 +85,7 @@ router.post('/register', async (req, res, next) => {
 router.post('/login', async (req, res, next) => {
     try {
         var { body } = req
+        console.log(body.userName);
         // var errors = new UniversalError()
         if (!body.userName) {
             console.log('Username was empty')
@@ -84,7 +102,7 @@ router.post('/login', async (req, res, next) => {
         await res.json(user)
     }
     catch (error) {
-        next(error);
+        res.json(error)
     }
 })
 router.post('/logout', withAuth, async (req, res) => {
@@ -101,10 +119,12 @@ router.get('/data', withAuth, async (req, res) => {
     }
 })
 router.post('/loginWithFb', async (req, res, next) => {
-    const user = await userService.loginFB(req.headers.authorization);
+    var { headers } = req
+    const user = await userService.loginFB(headers.authorization, headers.content);
     await res.json(user);
 })
 router.post('/loginWithGG', async (req, res, next) => {
+    console.log(req.headers)
     const user = await userService.loginGG(req.headers.authorization);
     await res.json(user);
 })

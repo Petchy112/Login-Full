@@ -2,6 +2,12 @@ const user = require('../models/userModel')
 const jwt = require('jsonwebtoken');
 const config = require('../config');
 const userAuthToken = require('../models/userAuthModel')
+const FB = require('fb')
+const sha1 = require('js-sha1')
+const generatePasswordHash = require('../help/passwordHash')
+const verifyPassword = require('../help/passwordHash')
+const { OAuth2Client } = require('google-auth-library');
+const client = new OAuth2Client('871927269871-tag50bhnoj696jpbc2fdhojp1ha7uqka.apps.googleusercontent.com');
 
 const userService = {
     async register(input) {
@@ -16,23 +22,23 @@ const userService = {
             userdata.phoneNumber = input.phoneNumber
 
 
-        var isExistEmail = await User.findOne({ email: input.email })
+        var isExistEmail = await user.findOne({ email: input.email })
         if (isExistEmail) {
-            console.log('The email is already use!')
-            return
+            dataRes = ('The email is already use!')
+            return dataRes
         }
-        var isExistUsername = await User.findOne({ userName: input.userName })
+        var isExistUsername = await user.findOne({ userName: input.userName })
         if (isExistUsername) {
-            console.log('Username is already use!')
-            return
+            dataRes = ('Username is already use!')
+            return dataRes
         }
-        await user.save()
+        await userdata.save();
 
     },
     async login(userName, password) {
         console.log('login called', userName)
 
-        var thisUser = await User.findOne({ userName })
+        var thisUser = await user.findOne({ userName })
 
         if (thisUser) {
             if (thisUser.passwordHash !== sha1(password)) {
@@ -42,7 +48,7 @@ const userService = {
             const accessTokenExpiresAt = new Date()
             const signOptionsAccessToken = {
                 ...config.session.JWT,
-                expiresIn: config.auth.expires.accessToken
+                expiresIn: config.auth.expiresIn.accessToken
             }
             const payloadAccessToken = {
                 userName: thisUser.userName,
@@ -51,7 +57,7 @@ const userService = {
             }
 
 
-            const expiresIn = config.auth.expires.accessToken;
+            const expiresIn = config.auth.expiresIn.accessToken;
             accessTokenExpiresAt.setSeconds(accessTokenExpiresAt.getSeconds() + expiresIn)
 
 
@@ -70,7 +76,7 @@ const userService = {
         }
         else {
             console.log({ Message: 'Username was invalid' })
-            return
+            return Error
         }
     },
     async revokeAccessToken(accessToken) {
@@ -97,11 +103,13 @@ const userService = {
             }
         }
     },
-    async loginFB(userID) {
-        console.log('facebookLogin called', userID);
-        const data = await FB.api('/me', {
-            field: ['id', 'email', 'first_name', 'last_name'].join(','), userId: userID
-        })
+    async loginFB(token, userID) {
+        console.log('facebookLogin called', token);
+        const data = await FB.api('me', {
+            fields: ['id', 'name', 'email', 'first_name', 'last_name'].join(','), access_token: token,
+        });
+
+        console.log(data);
         const fbUserData = new user();
         fbUserData.userId = userID,
             fbUserData.userName = data.email,
@@ -109,33 +117,34 @@ const userService = {
             fbUserData.lastName = data.last_name,
             fbUserData.email = data.email
 
-        var isUserId = await user.findOne({ userId: userID })
-        if (!isUserId) {
-            await fbUserData.save();
-        }
         const accessTokenExpiresAt = new Date()
         const signOptionsAccessToken = {
             ...config.session.JWT,
             expiresIn: config.auth.expiresIn.accessToken
         }
         const payloadAccessToken = {
-            userName: data.email,
             firstName: data.first_name,
             lastName: data.last_name,
             email: data.email
         }
 
-        const expiresIn = config.auth.expires.accessToken;
+        const expiresIn = config.auth.expiresIn.accessToken;
         accessTokenExpiresAt.setSeconds(accessTokenExpiresAt.getSeconds() + expiresIn)
 
 
         const accessToken = jwt.sign(payloadAccessToken, 'secret', signOptionsAccessToken)
 
-        const UserAuth = new userAuthToken()
-        UserAuth.userName = userName
-        UserAuth.accessToken = accessToken
-        UserAuth.accessTokenExpiresAt = accessTokenExpiresAt
-        await UserAuth.save()
+
+        const userAuth = new userAuthToken()
+        userAuth.userId = userID
+        userAuth.accessToken = accessToken
+        userAuth.accessTokenExpiresAt = accessTokenExpiresAt
+        await userAuth.save();
+
+        var isUserId = await user.findOne({ userID })
+        if (!isUserId) {
+            await fbUserData.save();
+        }
 
         dataResponse = {
             message: 'Auth Successful',
@@ -144,8 +153,26 @@ const userService = {
         return dataResponse
     },
     async loginGG(idToken) {
+        console.log('googleLogin called', idToken)
+        const ticket = await client.verifyIdToken({
+            idToken: idToken,
+            audience: '871927269871-tag50bhnoj696jpbc2fdhojp1ha7uqka.apps.googleusercontent.com',
+        });
 
-    },
+        const payload = ticket.getPayload();
+
+        const googleUser = new user();
+        googleUser.userName = payload.given_name,
+            googleUser.firstName = payload.given_name,
+            googleUser.lastName = payload.family_name,
+            googleUser.email = payload.email
+        await googleUser.save()
+        resData = {
+            Message: 'Auth Successful'
+        }
+        return resData
+
+    }
 }
 
 
