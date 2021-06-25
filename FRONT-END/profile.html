@@ -9,11 +9,39 @@
 </head>
 
 <body>
+    <div id="data"></div>
+    <div id="result"></div>
     <button type="submit">Sign out</button>
 </body>
 
 <script>
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InRlc3QiLCJlbWFpbCI6InRlc3RAaG90bWFpbC5jb20iLCJwaG9uZU51bWJlciI6IjA4MDEyMzY3NjAiLCJpYXQiOjE2MjQ2MTI5OTMsImV4cCI6MTYyNDYxNjU5MywiaXNzIjoiSldUIn0.606uxLPkOr5q3qv606otrJaRdT_lfkDhB99Z1nyWUc8");
 
+    var requestOptions = {
+        method: 'GET',
+        headers: myHeaders,
+        redirect: 'follow'
+    };
+
+    fetch("http://localhost:80/api/data", requestOptions)
+        .then(response => response.json())
+        .then(result => {
+            localStorage.setItem("lastname", result.lastName);
+            document.getElementById("result").innerHTML = localStorage.getItem("lastname");
+
+            var userData = {
+                firstName: result.firstName,
+                lastName: result.lastName,
+                email: result.email
+            }
+            document.getElementById("data").innerHTML = userData.email
+            console.log(userData);
+            // document.getElementById("data").innerHTML = result.lastName
+            // document.getElementById("data").innerHTML = result.email
+            console.log(result.firstName)
+        })
+        .catch(error => console.log('error', error));
 </script>
 
 </html>
