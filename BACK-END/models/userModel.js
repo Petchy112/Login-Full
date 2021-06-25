@@ -28,6 +28,11 @@ var schema = mongoose.Schema({
         type: String,
         require: false
     },
+    typeLogin: {
+        type: String,
+        require: false,
+        default: 'email_password'
+    }
 })
 
 var user = mongoose.model('user', schema)
