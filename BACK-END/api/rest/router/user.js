@@ -7,28 +7,13 @@ const path = require('path')
 
 
 router.get('/start', async (req, res) => {
-    try {
-        await res.sendFile(path.join(__dirname, "../../../../", 'FRONT-END/index.html'));
-    }
-    catch (error) {
-        console.log(error)
-    }
+    await res.sendFile(path.join(__dirname, "../../../../", 'FRONT-END/index.html'));
 })
 router.get('/registerForm', async (req, res) => {
-    try {
-        await res.sendFile(path.join(__dirname, "../../../../", 'FRONT-END/register.html'));
-    }
-    catch (error) {
-        console.log(error)
-    }
+    await res.sendFile(path.join(__dirname, "../../../../", 'FRONT-END/register.html'));
 })
 router.get('/routeProfile', async (req, res) => {
-    try {
-        await res.sendFile(path.join(__dirname, "../../../../", 'FRONT-END/profile.html'));
-    }
-    catch (error) {
-        res.send(error)
-    }
+    await res.sendFile(path.join(__dirname, "../../../../", 'FRONT-END/profile.html'));
 })
 router.post('/register', async (req, res, next) => {
     try {
@@ -118,21 +103,17 @@ router.post('/logout', withAuth, async (req, res) => {
     res.json(logout)
 })
 router.get('/data', withAuth, async (req, res) => {
-    try {
-        const result = await userService.getUser(accesstoken)
-        res.json(result)
-    }
-    catch (error) {
-        error
-    }
+    const result = await userService.getUser(req.headers.authorization.replace('Bearer ', ''))
+    res.json(result)
 })
-router.post('/loginWithFb', async (req, res, next) => {
-    var { headers } = req
-    const user = await userService.loginFB(headers.authorization, headers.content);
+router.post('/loginWithFb', async (req, res) => {
+    console.log(req.headers);
+    const user = await userService.loginFB(req.headers.authorization, req.headers.userid, req.headers.type);
     await res.json(user);
 })
 router.post('/loginWithGG', async (req, res, next) => {
-    const user = await userService.loginGG(req.headers.authorization);
+    var { headers } = req
+    const user = await userService.loginGG(headers.authorization, headers.type);
     await res.json(user);
 })
 
