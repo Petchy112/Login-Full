@@ -1,4 +1,3 @@
-const user = require('../models/userModel')
 const jwt = require('jsonwebtoken');
 const config = require('../config');
 const userAuthToken = require('../models/userAuthModel')
@@ -7,6 +6,7 @@ const sha1 = require('js-sha1')
 const generatePasswordHash = require('../help/passwordHash')
 const verifyPassword = require('../help/passwordHash')
 const { OAuth2Client } = require('google-auth-library');
+const user = require('../models/userModel');
 const client = new OAuth2Client('871927269871-tag50bhnoj696jpbc2fdhojp1ha7uqka.apps.googleusercontent.com');
 
 const userService = {
@@ -15,12 +15,11 @@ const userService = {
 
         const userdata = new user();
         userdata.userName = input.userName,
-            userdata.passwordHash = sha1(input.password),
+            userdata.passwordHash = input.password,
             userdata.firstName = input.firstName,
             userdata.lastName = input.lastName,
             userdata.email = input.email,
             userdata.phoneNumber = input.phoneNumber
-
 
         var isExistEmail = await user.findOne({ email: input.email })
         if (isExistEmail) {
@@ -33,8 +32,12 @@ const userService = {
             return dataRes
         }
         await userdata.save();
+        userdata.userId = userdata._id
+        await userdata.save();
+
+
         var dataRes = {
-            Message: 'Login successfully'
+            Message: 'Registered'
         }
         return dataRes
 
@@ -45,7 +48,8 @@ const userService = {
         var thisUser = await user.findOne({ userName })
 
         if (thisUser) {
-            if (thisUser.passwordHash !== sha1(password)) {
+            const createId = this
+            if (thisUser.passwordHash !== password) {
                 console.log('Password was invalid')
 
             }
@@ -74,6 +78,8 @@ const userService = {
             UserAuth.accessTokenExpiresAt = accessTokenExpiresAt
             await UserAuth.save()
 
+
+
             dataRes = {
                 Message: 'Login successfully'
             }
@@ -94,34 +100,33 @@ const userService = {
     },
     async getUser(accessToken) {
         console.log('get data', accessToken)
-        const userTokenData = userAuthToken.findOne({ accessToken })
-        if (userTokenData) {
-            const userData = user.findOne({ userName: userTokenData.userName })
-            if (userData) {
-                const result = {
-                    userName: userData.userName,
-                    firstName: userData.firstName,
-                    lastName: userData.lastName,
-                    email: userData.email,
-                    phoneNumber: userData.phoneNumber
-                }
-                return result
-            }
+        const userTokenData = await userAuthToken.findOne({ accessToken })
+        const userInfo = await user.findOne({ userId: userTokenData.userId })
+        const result = {
+            firstName: userInfo.firstName,
+            lastName: userInfo.lastName,
+            email: userInfo.email,
+            phoneNumber: userInfo.phoneNumber
         }
+        console.log(result)
+        return result
     },
-    async loginFB(token, userID) {
+    async loginFB(token, userid, type) {
         console.log('facebookLogin called', token);
+        console.log(userid);
+        console.log(type);
         const data = await FB.api('me', {
             fields: ['id', 'name', 'email', 'first_name', 'last_name'].join(','), access_token: token,
         });
 
         console.log(data);
         const fbUserData = new user();
-        fbUserData.userId = userID,
+        fbUserData.userId = userid,
             fbUserData.userName = data.email,
             fbUserData.firstName = data.first_name,
             fbUserData.lastName = data.last_name,
-            fbUserData.email = data.email
+            fbUserData.email = data.email,
+            fbUserData.typeLogin = type
 
         const accessTokenExpiresAt = new Date()
         const signOptionsAccessToken = {
@@ -142,23 +147,23 @@ const userService = {
 
 
         const userAuth = new userAuthToken()
-        userAuth.userId = userID
+        userAuth.userId = userid
         userAuth.accessToken = accessToken
         userAuth.accessTokenExpiresAt = accessTokenExpiresAt
         await userAuth.save();
 
-        var isUserId = await user.findOne({ userID })
+        var isUserId = await user.findOne({ userid })
         if (!isUserId) {
             await fbUserData.save();
         }
 
         dataResponse = {
             message: 'Login successfully',
-            id: userID
+            id: userid
         }
         return dataResponse
     },
-    async loginGG(idToken) {
+    async loginGG(idToken, type) {
         console.log('googleLogin called', idToken)
         const ticket = await client.verifyIdToken({
             idToken: idToken,
@@ -172,7 +177,8 @@ const userService = {
             googleUser.userName = payload.email,
             googleUser.firstName = payload.given_name,
             googleUser.lastName = payload.family_name,
-            googleUser.email = payload.email
+            googleUser.email = payload.email,
+            googleUser.typeLogin = type
 
         var userId = payload.sub
         const accessTokenExpiresAt = new Date()

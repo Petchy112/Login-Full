@@ -14,5 +14,5 @@ var schema = mongoose.Schema({
     }
 })
 
-var userAuth = mongoose.model('userAuth', schema)
-module.exports = userAuth
+var userAuthToken = mongoose.model('userAuth', schema)
+module.exports = userAuthToken
