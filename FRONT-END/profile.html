@@ -9,14 +9,16 @@
 </head>
 
 <body>
-    <div id="data"></div>
-    <div id="result"></div>
+    <div id="fname"></div>
+    <div id="lname"></div>
+    <div id="email"></div>
+    <div id="phoneNumber"></div>
     <button type="submit">Sign out</button>
 </body>
 
 <script>
     var myHeaders = new Headers();
-    myHeaders.append("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6InRlc3QiLCJlbWFpbCI6InRlc3RAaG90bWFpbC5jb20iLCJwaG9uZU51bWJlciI6IjA4MDEyMzY3NjAiLCJpYXQiOjE2MjQ2MTI5OTMsImV4cCI6MTYyNDYxNjU5MywiaXNzIjoiSldUIn0.606uxLPkOr5q3qv606otrJaRdT_lfkDhB99Z1nyWUc8");
+    myHeaders.append("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdE5hbWUiOiJQJ1BldGNoIiwibGFzdE5hbWUiOiJDJ2NoaWxsIiwiZW1haWwiOiJwZXRjaF81MDFfQGhvdG1haWwuY29tIiwiaWF0IjoxNjI0ODY3NDY3LCJleHAiOjE2MjQ4NzEwNjcsImlzcyI6IkpXVCJ9.8f8_6GE6yaxUGsPhZ58laMeB-hR86IiEP-oAgpgPoR4");
 
     var requestOptions = {
         method: 'GET',
@@ -27,8 +29,17 @@
     fetch("http://localhost:80/api/data", requestOptions)
         .then(response => response.json())
         .then(result => {
-            localStorage.setItem("lastname", result.lastName);
-            document.getElementById("result").innerHTML = localStorage.getItem("lastname");
+            //Store
+            localStorage.setItem("fname", result.firstName);
+            localStorage.setItem("lname", result.lastName);
+            localStorage.setItem("email", result.email);
+            localStorage.setItem("phoneNumber", result.phoneNumber);
+
+            //Retrieve
+            document.getElementById("fname").innerHTML = localStorage.getItem("fname");
+            document.getElementById("lname").innerHTML = localStorage.getItem("lname");
+            document.getElementById("email").innerHTML = localStorage.getItem("email");
+            document.getElementById("phoneNumber").innerHTML = localStorage.getItem("phoneNumber");
 
             var userData = {
                 firstName: result.firstName,
@@ -36,7 +47,7 @@
                 email: result.email
             }
             document.getElementById("data").innerHTML = userData.email
-            console.log(userData);
+
             // document.getElementById("data").innerHTML = result.lastName
             // document.getElementById("data").innerHTML = result.email
             console.log(result.firstName)

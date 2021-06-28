@@ -81,7 +81,8 @@ const userService = {
 
 
             dataRes = {
-                Message: 'Login successfully'
+                Message: 'Login successfully',
+                Token: accessToken
             }
             return dataRes
         }
@@ -210,7 +211,8 @@ const userService = {
             await googleUser.save()
         }
         resData = {
-            Message: 'Login successfully'
+            Message: 'Login successfully',
+            token: accessToken
         }
         return resData
 

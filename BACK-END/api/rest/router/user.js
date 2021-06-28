@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const userService = require('../../../services/user');
 const validate = require('validator');
-const withAuth = require('../middleware/withAuth');
+const checkAuth = require('../middleware/withAuth');
+const withAuth = require('../middleware/withAuth')
 const path = require('path')
 
 
@@ -103,8 +104,13 @@ router.post('/logout', withAuth, async (req, res) => {
     res.json(logout)
 })
 router.get('/data', withAuth, async (req, res) => {
-    const result = await userService.getUser(req.headers.authorization.replace('Bearer ', ''))
-    res.json(result)
+    try {
+        const result = await userService.getUser(req.headers.authorization.replace('Bearer ', ''))
+        res.json(result)
+    }
+    catch (error) {
+        res.json(error)
+    }
 })
 router.post('/loginWithFb', async (req, res) => {
     console.log(req.headers);
