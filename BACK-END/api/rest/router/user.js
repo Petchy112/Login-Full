@@ -113,8 +113,8 @@ router.get('/data', withAuth, async (req, res) => {
     }
 })
 router.post('/loginWithFb', async (req, res) => {
-    console.log(req.headers);
-    const user = await userService.loginFB(req.headers.authorization, req.headers.userid, req.headers.type);
+    var { headers } = req
+    const user = await userService.loginFB(headers.authorization, headers.userid, headers.type);
     await res.json(user);
 })
 router.post('/loginWithGG', async (req, res, next) => {
