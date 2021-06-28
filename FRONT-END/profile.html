@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <title>User Profile</title>
 </head>
 
@@ -17,16 +18,14 @@
 </body>
 
 <script>
-    var myHeaders = new Headers();
-    myHeaders.append("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdE5hbWUiOiJQJ1BldGNoIiwibGFzdE5hbWUiOiJDJ2NoaWxsIiwiZW1haWwiOiJwZXRjaF81MDFfQGhvdG1haWwuY29tIiwiaWF0IjoxNjI0ODY3NDY3LCJleHAiOjE2MjQ4NzEwNjcsImlzcyI6IkpXVCJ9.8f8_6GE6yaxUGsPhZ58laMeB-hR86IiEP-oAgpgPoR4");
-
-    var requestOptions = {
-        method: 'GET',
-        headers: myHeaders,
-        redirect: 'follow'
+    var config = {
+        method: 'get',
+        url: 'http://localhost:80/api/data',
+        headers: {
+            'Authorization': 'Bearer ' + localStorage.getItem("accessToken")
+        }
     };
-
-    fetch("http://localhost:80/api/data", requestOptions)
+    axios(config)
         .then(response => response.json())
         .then(result => {
             //Store
