@@ -82,7 +82,7 @@ const userService = {
 
             dataRes = {
                 Message: 'Login successfully',
-                Token: accessToken
+                accessToken: accessToken
             }
             return dataRes
         }
@@ -114,13 +114,11 @@ const userService = {
     },
     async loginFB(token, userid, type) {
         console.log('facebookLogin called', token);
-        console.log(userid);
-        console.log(type);
+
         const data = await FB.api('me', {
             fields: ['id', 'name', 'email', 'first_name', 'last_name'].join(','), access_token: token,
         });
 
-        console.log(data);
         const fbUserData = new user();
         fbUserData.userId = userid,
             fbUserData.userName = data.email,
@@ -153,14 +151,14 @@ const userService = {
         userAuth.accessTokenExpiresAt = accessTokenExpiresAt
         await userAuth.save();
 
-        var isUserId = await user.findOne({ userid })
-        if (!isUserId) {
+        var isFbUserId = await user.findOne({ userId: userid })
+        if (!isFbUserId) {
             await fbUserData.save();
         }
 
         dataResponse = {
             message: 'Login successfully',
-            id: userid
+            accessToken: accessToken
         }
         return dataResponse
     },
@@ -212,7 +210,7 @@ const userService = {
         }
         resData = {
             Message: 'Login successfully',
-            token: accessToken
+            accessToken: accessToken
         }
         return resData
 
