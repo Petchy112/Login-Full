@@ -26,7 +26,7 @@
         <input type="text" id="userName" name="userName" required><br>
         <label for="pwd">Password</label><br>
         <input type="password" id="password" name="password" required><br><br>
-        <button onclick="location.href='/api/routeProfile',getUser()" type="submit" value="Login">submit</button>
+        <button onclick="getUser()" type="submit" value="Login">Login</button>
     </div>
     <br><br>
     <div class="center">
@@ -72,22 +72,24 @@
             redirect: 'follow'
         };
 
-        await fetch("http://localhost:80/api/login", requestOptions)
-            .then(result => alert(result))
+        await axios("http://localhost:80/api/login", requestOptions)
+            .then(result => console.log(result.json()))
 
     }
-
     async function callFB(response) {
         if (response.status == 'connected') {
             console.log(response)
-            const data = await fetch("http://localhost:80/api/loginWithFb", {
+            await axios("http://localhost:80/api/loginWithFb", {
                 method: 'POST',
                 headers: {
                     authorization: response.authResponse.accessToken,
                     userid: response.authResponse.userID,
                     type: response.authResponse.graphDomain
                 }
-            }).then(response => {
+            }).then((response) => {
+                console.log(response.data.accessToken)
+                localStorage.setItem("accessToken", response.data.accessToken);
+
                 if (response.ok) {
                     alert('Facebook Logged in')
                 }
@@ -97,16 +99,15 @@
 
     async function callGG(googleUser) {
         var profile = await googleUser.getAuthResponse();
-        const data = await fetch("http://localhost:80/api/loginWithGG", {
+        const data = await axios("http://localhost:80/api/loginWithGG", {
             method: 'POST',
             headers: {
                 authorization: profile.id_token,
                 type: profile.idpId
             }
-        }).then(response => {
-            if (response.ok) {
-                alert('Google logged in')
-            }
+        }).then((response) => {
+            console.log(response.data.accessToken)
+            localStorage.setItem("accessToken", response.data.accessToken);
         })
     }
 </script>
