@@ -34,25 +34,25 @@ module.exports = async (req = checkAuth, res, next) => {
                 }
                 else {
                     console.log(date);
-                    tokenData.userId = 'test'
+                    tokenData.userId = null
                     await tokenData.save();
                     next()
                 }
             }
             else {
-                tokenData.userId = null
+                req.userId = null
                 await tokenData.save();
                 next()
             }
         }
         else {
-            tokenData.userId = null
+            req.userId = null
             await tokenData.save();
             next()
         }
     }
     catch (error) {
-        tokenData.userId = null
+        req.userId = null
         await tokenData.save();
         next(error)
     }
