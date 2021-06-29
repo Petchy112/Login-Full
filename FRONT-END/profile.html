@@ -19,20 +19,20 @@
 
 <script>
     var config = {
-        method: 'get',
-        url: 'http://localhost:80/api/data',
+        method: 'GET',
+        url: "http://localhost:80/api/data",
         headers: {
             'Authorization': 'Bearer ' + localStorage.getItem("accessToken")
         }
     };
     axios(config)
-        .then(response => response.json())
         .then(result => {
+
             //Store
-            localStorage.setItem("fname", result.firstName);
-            localStorage.setItem("lname", result.lastName);
-            localStorage.setItem("email", result.email);
-            localStorage.setItem("phoneNumber", result.phoneNumber);
+            localStorage.setItem("fname", result.data.firstName);
+            localStorage.setItem("lname", result.data.lastName);
+            localStorage.setItem("email", result.data.email);
+            localStorage.setItem("phoneNumber", result.data.phoneNumber);
 
             //Retrieve
             document.getElementById("fname").innerHTML = localStorage.getItem("fname");
@@ -40,16 +40,9 @@
             document.getElementById("email").innerHTML = localStorage.getItem("email");
             document.getElementById("phoneNumber").innerHTML = localStorage.getItem("phoneNumber");
 
-            var userData = {
-                firstName: result.firstName,
-                lastName: result.lastName,
-                email: result.email
-            }
-            document.getElementById("data").innerHTML = userData.email
 
             // document.getElementById("data").innerHTML = result.lastName
             // document.getElementById("data").innerHTML = result.email
-            console.log(result.firstName)
         })
         .catch(error => console.log('error', error));
 </script>
