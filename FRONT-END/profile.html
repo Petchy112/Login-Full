@@ -1,72 +1,106 @@
-<!DOCTYPE html>
-<html lang="en">
+<DOCTYPE html>
+    <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <title>User Profile</title>
-</head>
-
-<body>
-    <div id="fname"></div>
-    <div id="lname"></div>
-    <div id="email"></div>
-    <div id="phoneNumber"></div>
-    <button onclick="logout(),location.href='/api/start'" type="submit">Sign out</button>
-</body>
-
-<script>
-    var config = {
-        method: 'GET',
-        url: "http://localhost:80/api/data",
-        headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem("accessToken")
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <title>User Profile</title>
+    </head>
+    <style>
+        #add {
+            text-align: right;
         }
-    };
-    axios(config)
-        .then(result => {
 
-            //Store
-            localStorage.setItem("fname", result.data.firstName);
-            localStorage.setItem("lname", result.data.lastName);
-            localStorage.setItem("email", result.data.email);
-            localStorage.setItem("phoneNumber", result.data.phoneNumber);
+        .profile {
+            text-align: center;
+        }
+    </style>
 
-            //Retrieve
-            document.getElementById("fname").innerHTML = localStorage.getItem("fname");
-            document.getElementById("lname").innerHTML = localStorage.getItem("lname");
-            document.getElementById("email").innerHTML = localStorage.getItem("email");
-            document.getElementById("phoneNumber").innerHTML = localStorage.getItem("phoneNumber");
-
-
-            // document.getElementById("data").innerHTML = result.lastName
-            // document.getElementById("data").innerHTML = result.email
-        })
-        .catch(error => console.log('error', error));
-
-
-    async function logout() {
-
+    <body>
+        <div class="profile">
+            <div id="fname"></div>
+            <div id="lname"></div>
+            <div id="email"></div>
+            <div id="phoneNumber"></div>
+            <button onclick="logout(),location.href='/api/start'" type="submit">Sign out</button>
+        </div>
+        <button id="add" onclick="location.href='/api/routeEvent'" type="submit">Add Event</button>
+        <div class="event">
+            <div id="topic"></div>
+            <div id="description"></div>
+        </div>
+    </body>
+    <script>
         var config = {
-            method: 'post',
-            url: 'http://localhost:80/api/logout',
+            method: 'GET',
+            url: "http://localhost:80/api/data",
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem("accessToken")
             }
         };
+        axios(config)
+            .then(result => {
+                //Store
+                localStorage.setItem("fname", result.data.firstName);
+                localStorage.setItem("lname", result.data.lastName);
+                localStorage.setItem("email", result.data.email);
+                localStorage.setItem("phoneNumber", result.data.phoneNumber);
 
-        await axios(config)
-            .then((response) => {
-                console.log(response.data);
+                //Retrieve
+                document.getElementById("fname").innerHTML = localStorage.getItem("fname");
+                document.getElementById("lname").innerHTML = localStorage.getItem("lname");
+                document.getElementById("email").innerHTML = localStorage.getItem("email");
+                document.getElementById("phoneNumber").innerHTML = localStorage.getItem("phoneNumber");
             })
-            .catch((error) => {
-                console.log(error);
-            });
+            .catch(error => console.log('error', error));
 
-        await localStorage.removeItem("accessToken")
-    }
-</script>
+        // Edit get event
+        var getEvent = {
+            method: 'GET',
+            url: "http://localhost:80/api/event",
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem("accessToken")
+            }
+        };
+        axios(getEvent)
+            .then(result => {
+                console.log(result.data, 'result');
+                //Store
+                result.data.forEach(topic => {
+                    console.log(topic);
+                    document.getElementById("topic").innerHTML += topic.topic
 
-</html>
+                })
+
+
+                // //Retrieve
+                // document.getElementById("topic").innerHTML = localStorage.getItem("topic");
+                // document.getElementById("description").innerHTML = localStorage.getItem("description");
+            })
+            .catch(error => console.log('error', error));
+        ///
+
+
+        async function logout() {
+            var config = {
+                method: 'post',
+                url: 'http://localhost:80/api/logout',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem("accessToken")
+                }
+            };
+            await axios(config)
+                .then((response) => {
+                    console.log(response.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+
+            await localStorage.removeItem("accessToken")
+        }
+    </script>
+
+    </html>
