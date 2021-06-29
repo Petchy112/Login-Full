@@ -17,12 +17,9 @@ router.post('/newEvent', withAuth, async (req, res) => {
     const event = await eventService.addEvent(body.topic, body.description)
     res.json(event);
 })
-router.post('/edit', async (req, res) => {
-    var obj = new lotto(req.body);
-    await obj.save((err, data) => {
-        if (err) return res.status(400), err;
-        res.json({ Message: 'Inserted' })
-    })
+router.put('/edit/:_id', async (req, res) => {
+    const event = await eventService.editEvent(req.params._id, req.body.topic, req.body.description)
+    res.json(event);
 })
 router.delete('/:_id', async (req, res) => {
     await findByIdAndDelete((req.params._id), (err, result) => {
