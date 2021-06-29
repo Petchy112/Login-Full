@@ -1,12 +1,12 @@
 const jwt = require('jsonwebtoken');
 const config = require('../config');
-const userAuthToken = require('../models/userAuthModel')
+const UserAuthToken = require('../models/userAuthModel')
 const FB = require('fb')
 const sha1 = require('js-sha1')
 const generatePasswordHash = require('../help/passwordHash')
 const verifyPassword = require('../help/passwordHash')
 const { OAuth2Client } = require('google-auth-library');
-const user = require('../models/userModel');
+const User = require('../models/userModel');
 const client = new OAuth2Client('871927269871-tag50bhnoj696jpbc2fdhojp1ha7uqka.apps.googleusercontent.com');
 
 const userService = {
@@ -45,7 +45,7 @@ const userService = {
     async login(userName, password) {
         console.log('login called', userName)
 
-        var thisUser = await user.findOne({ userName })
+        var thisUser = await User.findOne({ userName })
 
         if (thisUser) {
             const createId = this
@@ -71,7 +71,7 @@ const userService = {
 
             const accessToken = jwt.sign(payloadAccessToken, 'secret', signOptionsAccessToken)
 
-            const UserAuth = new userAuthToken()
+            const UserAuth = new UserAuthToken()
             UserAuth.userId = thisUser.id
             UserAuth.userName = userName
             UserAuth.accessToken = accessToken
@@ -93,7 +93,7 @@ const userService = {
     },
     async revokeAccessToken(accessToken) {
         console.log('revoke called', accessToken);
-        await userAuthToken.findOneAndDelete({ accessToken })
+        await UserAuthToken.findOneAndDelete({ accessToken })
         const dataRes = {
             message: 'logged out!',
         }
@@ -101,8 +101,8 @@ const userService = {
     },
     async getUser(accessToken) {
         console.log('get data', accessToken)
-        const userTokenData = await userAuthToken.findOne({ accessToken })
-        const userInfo = await user.findOne({ userId: userTokenData.userId })
+        const userTokenData = await UserAuthToken.findOne({ accessToken })
+        const userInfo = await User.findOne({ userId: userTokenData.userId })
         const result = {
             firstName: userInfo.firstName,
             lastName: userInfo.lastName,
@@ -119,7 +119,7 @@ const userService = {
             fields: ['id', 'name', 'email', 'first_name', 'last_name'].join(','), access_token: token,
         });
 
-        const fbUserData = new user();
+        const fbUserData = new User();
         fbUserData.userId = userid,
             fbUserData.userName = data.email,
             fbUserData.firstName = data.first_name,
@@ -145,13 +145,13 @@ const userService = {
         const accessToken = jwt.sign(payloadAccessToken, 'secret', signOptionsAccessToken)
 
 
-        const userAuth = new userAuthToken()
+        const userAuth = new UserAuthToken()
         userAuth.userId = userid
         userAuth.accessToken = accessToken
         userAuth.accessTokenExpiresAt = accessTokenExpiresAt
         await userAuth.save();
 
-        var isFbUserId = await user.findOne({ userId: userid })
+        var isFbUserId = await User.findOne({ userId: userid })
         if (!isFbUserId) {
             await fbUserData.save();
         }
@@ -171,7 +171,7 @@ const userService = {
 
         const payload = ticket.getPayload();
 
-        const googleUser = new user();
+        const googleUser = new User();
         googleUser.userId = payload.sub,
             googleUser.userName = payload.email,
             googleUser.firstName = payload.given_name,
@@ -198,13 +198,13 @@ const userService = {
         const accessToken = jwt.sign(payloadAccessToken, 'secret', signOptionsAccessToken)
 
 
-        const userAuth = new userAuthToken()
+        const userAuth = new UserAuthToken()
         userAuth.userId = userId
         userAuth.accessToken = accessToken
         userAuth.accessTokenExpiresAt = accessTokenExpiresAt
         await userAuth.save();
 
-        var isUserId = await user.findOne({ userId })
+        var isUserId = await User.findOne({ userId })
         if (!isUserId) {
             await googleUser.save()
         }

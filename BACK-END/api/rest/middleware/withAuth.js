@@ -1,5 +1,5 @@
-const userAuthToken = require('../../../models/userAuthModel')
-const user = require('../../../models/userModel')
+const UserAuthToken = require('../../../models/userAuthModel')
+const User = require('../../../models/userModel')
 const ExpressRequest = require('express')
 
 
@@ -16,10 +16,10 @@ module.exports = async (req = checkAuth, res, next) => {
         if (req.headers.authorization) {
             console.log(req.headers.authorization, 'withAuthhhh')
             const token = req.headers.authorization.replace('Bearer ', '')
-            const tokenData = await userAuthToken.findOne({ accessToken: token })
+            const tokenData = await UserAuthToken.findOne({ accessToken: token })
             if (tokenData) {
                 console.log(tokenData.accessToken);
-                const userData = await user.findOne({ userId: tokenData.userId })
+                const userData = await User.findOne({ userId: tokenData.userId })
                 var date = new Date().toString({
                     timeZone: 'Asia/Bangkok'
                 });

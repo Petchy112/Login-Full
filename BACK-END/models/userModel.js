@@ -35,5 +35,5 @@ var schema = mongoose.Schema({
     }
 })
 
-var user = mongoose.model('user', schema)
-module.exports = user
+var User = mongoose.model('user', schema)
+module.exports = User
