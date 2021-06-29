@@ -26,7 +26,8 @@ var schema = mongoose.Schema({
     },
     phoneNumber: {
         type: String,
-        require: false
+        require: false,
+        default: 'None'
     },
     typeLogin: {
         type: String,
