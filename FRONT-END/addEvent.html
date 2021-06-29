@@ -1,0 +1,54 @@
+<DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Event</title>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    </head>
+    <style>
+        .center {
+            text-align: center;
+        }
+    </style>
+
+    <body>
+        <div class="center">
+            <label for="topic">Topic</label><br>
+            <input type="text" id="topic" name="topic" required><br>
+            <label for="description">Description</label><br>
+            <input type="text" id="description" name="description"><br><br>
+            <button onclick="addEvent()" type="submit" value="submit">submit</button>
+        </div>
+        <br><br>
+
+    </body>
+    <script>
+        function addEvent() {
+            var data = JSON.stringify({
+                "topic": document.getElementById('topic').value,
+                "description": document.getElementById('description').value
+            });
+
+            var config = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: data
+            };
+
+            axios('http://localhost:80/api/newEvent', config)
+                .then((response) => {
+                    console.log(response.data);
+                })
+                .catch((error) => {
+                    console.log("error");
+                });
+
+        }
+    </script>
+
+    </html>
