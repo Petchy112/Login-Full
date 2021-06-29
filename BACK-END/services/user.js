@@ -13,7 +13,7 @@ const userService = {
     async register(input) {
         console.log('register called', input)
 
-        const userdata = new user();
+        const userdata = new User();
         userdata.userName = input.userName,
             userdata.passwordHash = input.password,
             userdata.firstName = input.firstName,
@@ -21,12 +21,12 @@ const userService = {
             userdata.email = input.email,
             userdata.phoneNumber = input.phoneNumber
 
-        var isExistEmail = await user.findOne({ email: input.email })
+        var isExistEmail = await User.findOne({ email: input.email })
         if (isExistEmail) {
             dataRes = ('The email is already use!')
             return dataRes
         }
-        var isExistUsername = await user.findOne({ userName: input.userName })
+        var isExistUsername = await User.findOne({ userName: input.userName })
         if (isExistUsername) {
             dataRes = ('Username is already use!')
             return dataRes
@@ -48,7 +48,6 @@ const userService = {
         var thisUser = await User.findOne({ userName })
 
         if (thisUser) {
-            const createId = this
             if (thisUser.passwordHash !== password) {
                 console.log('Password was invalid')
 
