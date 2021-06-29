@@ -16,6 +16,9 @@ router.get('/registerForm', async (req, res) => {
 router.get('/routeProfile', async (req, res) => {
     await res.sendFile(path.join(__dirname, "../../../../", 'FRONT-END/profile.html'));
 })
+router.get('/routeEvent', async (req, res) => {
+    await res.sendFile(path.join(__dirname, "../../../../", 'FRONT-END/addEvent.html'));
+})
 router.post('/register', async (req, res, next) => {
     try {
         var { body } = req
@@ -76,7 +79,7 @@ router.post('/register', async (req, res, next) => {
         next(error);
     }
 })
-router.post('/login', async (req, res, next) => {
+router.post('/login', async (req, res) => {
     try {
         var { body } = req
         console.log(body.userName);
