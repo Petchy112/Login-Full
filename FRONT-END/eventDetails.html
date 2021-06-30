@@ -13,10 +13,20 @@
         Topic ID : <p id="topicId"></p>
         Topic : <p id="topic"></p>
         Description : <p id="description"></p>
+        <button onclick="routeEdit()" type="submit">Edit</button>
+        <!-- <a href="/api/profile"> -->
+        <a href="/api/profile">
+            <button onclick="deleteEvent()" type="submit">Delete</button></a>
+
     </body>
     <script>
         const params = new URL(window.location.href).searchParams.get('id');
         console.log(params);
+        function routeEdit() {
+            const params = new URL(window.location.href).searchParams.get('id');
+            console.log(params);
+            location.href = `/api/event/${params}/edit`
+        }
         var config = {
             method: 'GET',
             url: `http://localhost:80/api/event/${params}`,
@@ -42,6 +52,24 @@
                 console.log(error);
             });
 
+        function deleteEvent() {
+            console.log(params);
+            var config = {
+                method: 'DELETE',
+                url: `http://localhost:80/api/event/${params}`,
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem("accessToken")
+                }
+            };
+
+            axios(config)
+                .then(function (response) {
+                    console.log(JSON.stringify(response.data));
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
     </script>
 
     </html>

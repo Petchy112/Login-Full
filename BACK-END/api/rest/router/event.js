@@ -24,12 +24,12 @@ router.get('/event/:_id', withAuth, async (req, res) => {
         res.json({ result })
     })
 })
-router.put('/event/edit/:_id', async (req, res) => {
+router.put('/event/:_id/edit', async (req, res) => {
     const event = await eventService.editEvent(req.params._id, req.body.topic, req.body.description)
     res.json(event);
 })
-router.delete('/:_id', async (req, res) => {
-    await findByIdAndDelete((req.params._id), (err, result) => {
+router.delete('/event/:_id', async (req, res) => {
+    await Event.findByIdAndDelete((req.params._id), (err, result) => {
         if (err) return res.status(400), err;
         res.status(200).json({ message: 'Deleted' });
     })
