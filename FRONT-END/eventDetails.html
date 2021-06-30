@@ -1,0 +1,47 @@
+<DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <title>Details</title>
+    </head>
+
+    <body>
+        Topic ID : <p id="topicId"></p>
+        Topic : <p id="topic"></p>
+        Description : <p id="description"></p>
+    </body>
+    <script>
+        const params = new URL(window.location.href).searchParams.get('id');
+        console.log(params);
+        var config = {
+            method: 'GET',
+            url: `http://localhost:80/api/event/${params}`,
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem("accessToken")
+            },
+
+        };
+
+        axios(config)
+            .then((result) => {
+                //Store
+                localStorage.setItem("topicId", result.data.result._id);
+                localStorage.setItem("topic", result.data.result.topic);
+                localStorage.setItem("description", result.data.result.description);
+
+                //Retrieve
+                document.getElementById("topicId").innerHTML = localStorage.getItem("topicId");
+                document.getElementById("topic").innerHTML = localStorage.getItem("topic");
+                document.getElementById("description").innerHTML = localStorage.getItem("description");
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+
+    </script>
+
+    </html>

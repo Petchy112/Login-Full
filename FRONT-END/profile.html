@@ -11,10 +11,16 @@
     <style>
         #add {
             text-align: right;
+            border-bottom: 1px;
         }
 
         .profile {
             text-align: center;
+        }
+
+        li:hover {
+            color: blue;
+            text-decoration: underline;
         }
     </style>
 
@@ -26,11 +32,14 @@
             <div id="phoneNumber"></div>
             <button onclick="logout(),location.href='/api/start'" type="submit">Sign out</button>
         </div>
-        <button id="add" onclick="location.href='/api/routeEvent'" type="submit">Add Event</button>
+
         <div class="event">
             <div id="topic"></div>
             <div id="description"></div>
+            <br>
+            <button id="add" onclick="location.href='/api/addEvent'" type="submit">Add Event</button>
         </div>
+
     </body>
     <script>
         var config = {
@@ -56,7 +65,7 @@
             })
             .catch(error => console.log('error', error));
 
-        // Edit get event
+
         var getEvent = {
             method: 'GET',
             url: "http://localhost:80/api/event",
@@ -70,17 +79,11 @@
                 //Store
                 result.data.forEach(topic => {
                     console.log(topic);
-                    document.getElementById("topic").innerHTML += topic.topic
+                    document.getElementById("topic").innerHTML += `<li><a href=/api/eventDetail?id=${topic._id}>  ${topic.topic}  ${topic._id}</a></li>`
 
                 })
-
-
-                // //Retrieve
-                // document.getElementById("topic").innerHTML = localStorage.getItem("topic");
-                // document.getElementById("description").innerHTML = localStorage.getItem("description");
             })
             .catch(error => console.log('error', error));
-        ///
 
 
         async function logout() {
@@ -101,6 +104,27 @@
 
             await localStorage.removeItem("accessToken")
         }
+        // function thisEvent() {
+        //     var data = document.getElementById("topic").value
+        //     console.log(data);
+        //     var config = {
+        //         method: 'get',
+        //         url: 'http://localhost:80/api/event',
+        //         headers: {
+        //             'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdE5hbWUiOiIzMDcg4LiB4Li04LiV4LiS4Li04LiB4Liy4LiN4LiI4LiZ4LmMIiwibGFzdE5hbWUiOiLguJTguLTguKnguILguJnguLLguJkiLCJlbWFpbCI6InBldGNoLjE1OTE4QGdtYWlsLmNvbSIsImlhdCI6MTYyNTAzNTk1OCwiZXhwIjoxNjI1MDM5NTU4LCJpc3MiOiJKV1QifQ.Qnbo2-pVkPrn8_-uifHbISHs7c7icoOfPNkzm6t8sQU'
+        //         }
+        //     };
+
+        //     axios(config)
+        //         .then(function (response) {
+        //             console.log(JSON.stringify(response.data));
+        //         })
+        //         .catch(function (error) {
+        //             console.log(error);
+        //         });
+
+
+        // }
     </script>
 
     </html>
