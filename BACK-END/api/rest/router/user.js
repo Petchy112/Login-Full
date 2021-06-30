@@ -10,14 +10,17 @@ const path = require('path')
 router.get('/start', async (req, res) => {
     await res.sendFile(path.join(__dirname, "../../../../", 'FRONT-END/index.html'));
 })
-router.get('/registerForm', async (req, res) => {
+router.get('/register', async (req, res) => {
     await res.sendFile(path.join(__dirname, "../../../../", 'FRONT-END/register.html'));
 })
-router.get('/routeProfile', async (req, res) => {
+router.get('/profile', async (req, res) => {
     await res.sendFile(path.join(__dirname, "../../../../", 'FRONT-END/profile.html'));
 })
-router.get('/routeEvent', async (req, res) => {
+router.get('/addEvent', async (req, res) => {
     await res.sendFile(path.join(__dirname, "../../../../", 'FRONT-END/addEvent.html'));
+})
+router.get('/eventDetail', async (req, res) => {
+    await res.sendFile(path.join(__dirname, "../../../../", 'FRONT-END/eventDetails.html'));
 })
 router.post('/register', async (req, res, next) => {
     try {
