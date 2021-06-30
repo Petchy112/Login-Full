@@ -26,18 +26,19 @@
 
     <body>
         <div class="profile">
-            <div id="fname"></div>
-            <div id="lname"></div>
-            <div id="email"></div>
-            <div id="phoneNumber"></div>
+            <p id="fname"></p>
+            <p id="lname"></p>
+            <p id="email"></p>
+            <p id="phoneNumber"></p>
             <button onclick="logout(),location.href='/api/start'" type="submit">Sign out</button>
         </div>
 
         <div class="event">
-            <div id="topic"></div>
+            <h2 id="topic">
+            </h2>
             <div id="description"></div>
             <br>
-            <button id="add" onclick="location.href='/api/addEvent'" type="submit">Add Event</button>
+            <button onclick="location.href='/api/addEvent'" id="add" type="submit">Add Event</button>
         </div>
 
     </body>
@@ -79,7 +80,7 @@
                 //Store
                 result.data.forEach(topic => {
                     console.log(topic);
-                    document.getElementById("topic").innerHTML += `<li><a href=/api/eventDetail?id=${topic._id}>  ${topic.topic}  ${topic._id}</a></li>`
+                    document.getElementById("topic").innerHTML += `<li><a href=/api/eventDetail?id=${topic._id}>  ${topic.topic} </a></li>`
 
                 })
             })
