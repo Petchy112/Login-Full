@@ -5,7 +5,7 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Event</title>
+        <title>Add Event</title>
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     </head>
     <style>
@@ -20,7 +20,8 @@
             <input type="text" id="topic" name="topic" required><br>
             <label for="description">Description</label><br>
             <input type="text" id="description" name="description"><br><br>
-            <button onclick="addEvent()" type="submit" value="submit">submit</button>
+            <a href="/api/profile"><button onclick="addEvent()" type="submit">submit</button></a>
+            <a href="/api/profile"><button type="reset">cancel</button></a>
         </div>
         <br><br>
 
