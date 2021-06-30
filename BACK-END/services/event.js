@@ -24,11 +24,10 @@ const eventService = {
         try {
             console.log('edit event called', topicId);
 
-            await Event.findOneAndUpdate({ _id: topicId }, {
+            await Event.findByIdAndUpdate({ _id: topicId }, {
                 topic: topic,
                 description: description
             })
-
             var dataRes = {
                 message: 'Edit succesfully'
             }

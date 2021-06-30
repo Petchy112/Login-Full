@@ -41,19 +41,17 @@ module.exports = async (req = checkAuth, res, next) => {
             }
             else {
                 req.userId = null
-                await tokenData.save();
                 next()
             }
         }
         else {
             req.userId = null
-            await tokenData.save();
+
             next()
         }
     }
     catch (error) {
         req.userId = null
-        await tokenData.save();
         next(error)
     }
 }

@@ -1,118 +1,117 @@
-<!DOCTYPE html>
-<html lang="en">
+<DOCTYPE html>
+    <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="google-signin-client_id"
-        content="871927269871-tag50bhnoj696jpbc2fdhojp1ha7uqka.apps.googleusercontent.com">
-    <title>Login </title>
-    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-</head>
-<style>
-    .center {
-        text-align: center;
-    }
+    <head>
+        <meta charset="UTF-8">
+        <meta name="google-signin-client_id"
+            content="871927269871-tag50bhnoj696jpbc2fdhojp1ha7uqka.apps.googleusercontent.com">
+        <title>Login </title>
+        <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
+        <script src="https://apis.google.com/js/platform.js" async defer></script>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    </head>
+    <style>
+        .center {
+            text-align: center;
+        }
 
-    .g-signin2 {
-        text-align: center;
-    }
-</style>
+        .g-signin2 {
+            text-align: center;
+        }
+    </style>
 
-<body>
-    <div class="center">
-        <label for="username">Username</label><br>
-        <input type="text" id="userName" name="userName" required><br>
-        <label for="pwd">Password</label><br>
-        <input type="password" id="password" name="password" required><br><br>
-        <button onclick="getUser()" type="submit" value="Login">Login</button>
-    </div>
-    <br><br>
-    <div class="center">
-        <div class="fb-login-button" data-width="300" data-size="large" data-button-type="continue_with"
-            data-layout="default" data-auto-logout-link="false" data-use-continue-as="false"
-            scope="public_profile,email" onlogin="callFB"></div>
+    <body>
+        <div class="center">
+            <label for="username">Username</label><br>
+            <input type="text" id="userName" name="userName" required><br>
+            <label for="pwd">Password</label><br>
+            <input type="password" id="password" name="password" required><br><br>
+            <button onclick="Login()" type="submit" value="Login">Login</button>
+        </div>
         <br><br>
-        <div class="g-signin2" data-width="300" data-longtitle="true" data-onsuccess="callGG"></div>
+        <div class="center">
+            <div class="fb-login-button" data-width="300" data-size="large" data-button-type="continue_with"
+                data-layout="default" data-auto-logout-link="false" data-use-continue-as="false"
+                scope="public_profile,email" onlogin="callFB"></div>
+            <br><br>
+            <div class="g-signin2" data-width="300" data-longtitle="true" data-onsuccess="callGG"></div>
 
-        <p onClick="location.href='/api/registerForm'">or Sign up?
-    </div>
-</body>
-<script>
-    window.fbAsyncInit = function () {
-        FB.init({
-            appId: '1218076828653725',
-            cookie: true,
-            xfbml: true,
-            version: 'v11.0'
-        });
-    };
-    window.gapi.load("client:auth2") = function () {
-        window.gapi.client.init({
-            clientId: "871927269871-tag50bhnoj696jpbc2fdhojp1ha7uqka.apps.googleusercontent.com",
-            scope: "profile",
-        })
-    };
-
-    async function getUser() {
-
-        var myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
-
-        var raw = JSON.stringify({
-            "userName": document.getElementById('userName').value,
-            "password": document.getElementById('userName').value
-        });
-
-        var requestOptions = {
-            method: 'POST',
-            headers: myHeaders,
-            body: raw,
-            redirect: 'follow'
+            <p onClick="location.href='/api/registerForm'">or Sign up?
+        </div>
+    </body>
+    <script>
+        window.fbAsyncInit = function () {
+            FB.init({
+                appId: '1218076828653725',
+                cookie: true,
+                xfbml: true,
+                version: 'v11.0'
+            });
+        };
+        window.gapi.load("client:auth2") = function () {
+            window.gapi.client.init({
+                clientId: "871927269871-tag50bhnoj696jpbc2fdhojp1ha7uqka.apps.googleusercontent.com",
+                scope: "profile",
+            })
         };
 
-        await axios("http://localhost:80/api/login", requestOptions)
-            .then((response) => {
-                console.log(response.data.accessToken)
-                localStorage.setItem("accessToken", response.data.accessToken);
-            })
+        async function Login() {
+            var data = JSON.stringify({
+                'userName': document.getElementById("userName").value,
+                'password': document.getElementById("password").value
+            });
+            var config = {
+                method: 'post',
+                url: 'http://localhost:80/api/login',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                data: data
+            };
 
-    }
-    async function callFB(response) {
-        if (response.status == 'connected') {
-            console.log(response)
-            await axios("http://localhost:80/api/loginWithFb", {
+            axios(config)
+                .then(function (response) {
+                    console.log(response.data);
+                })
+                .catch(function (error) {
+                    console.log("error");
+                });
+
+        }
+        async function callFB(response) {
+            if (response.status == 'connected') {
+                console.log(response)
+                await axios("http://localhost:80/api/loginWithFb", {
+                    method: 'POST',
+                    headers: {
+                        authorization: response.authResponse.accessToken,
+                        userid: response.authResponse.userID,
+                        type: response.authResponse.graphDomain
+                    }
+                }).then((response) => {
+                    console.log(response.data.accessToken)
+                    localStorage.setItem("accessToken", response.data.accessToken);
+
+                    if (response.ok) {
+                        alert('Facebook Logged in')
+                    }
+                })
+            }
+        }
+
+        async function callGG(googleUser) {
+            var profile = await googleUser.getAuthResponse();
+            await axios("http://localhost:80/api/loginWithGG", {
                 method: 'POST',
                 headers: {
-                    authorization: response.authResponse.accessToken,
-                    userid: response.authResponse.userID,
-                    type: response.authResponse.graphDomain
+                    authorization: profile.id_token,
+                    type: profile.idpId
                 }
             }).then((response) => {
                 console.log(response.data.accessToken)
                 localStorage.setItem("accessToken", response.data.accessToken);
-
-                if (response.ok) {
-                    alert('Facebook Logged in')
-                }
             })
         }
-    }
+    </script>
 
-    async function callGG(googleUser) {
-        var profile = await googleUser.getAuthResponse();
-        await axios("http://localhost:80/api/loginWithGG", {
-            method: 'POST',
-            headers: {
-                authorization: profile.id_token,
-                type: profile.idpId
-            }
-        }).then((response) => {
-            console.log(response.data.accessToken)
-            localStorage.setItem("accessToken", response.data.accessToken);
-        })
-    }
-</script>
-
-</html>
+    </html>

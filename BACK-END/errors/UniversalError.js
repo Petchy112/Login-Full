@@ -1,5 +1,3 @@
-import { oc } from 'ts-optchain'
-
 class UniversalError extends Error {
     state = Object = {}
     amount = 0
