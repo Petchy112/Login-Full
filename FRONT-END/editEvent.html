@@ -1,0 +1,57 @@
+<DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Edit Event</title>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    </head>
+    <style>
+        .center {
+            text-align: center;
+        }
+    </style>
+
+    <body>
+        <div class="center">
+            <label for="topic">Topic</label><br>
+            <input type="text" id="topic" name="topic"><br>
+            <label for="description">Description</label><br>
+            <input type="" id="description" name="description"><br><br>
+            <a href="/api/profile"><button onclick="editEvent()" type="submit" value="submit">update</button></a>
+            <a href="/api/profile"><button type="reset">cancel</button></a>
+        </div>
+        <br><br>
+
+    </body>
+    <script>
+        const params = new URL(window.location.href).searchParams.get('id');
+        function editEvent() {
+            var data = JSON.stringify({
+                "topic": document.getElementById('topic').value,
+                "description": document.getElementById('description').value
+            });
+
+            var config = {
+                method: 'put',
+                url: `http://localhost:80/api/event/${params}/edit`,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: data
+            };
+
+            axios(config)
+                .then(function (response) {
+                    alert(response.data);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+
+        }
+    </script>
+
+    </html>

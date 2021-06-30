@@ -22,6 +22,10 @@ router.get('/addEvent', async (req, res) => {
 router.get('/eventDetail', async (req, res) => {
     await res.sendFile(path.join(__dirname, "../../../../", 'FRONT-END/eventDetails.html'));
 })
+router.get('/editEvent', async (req, res) => {
+    await res.sendFile(path.join(__dirname, "../../../../", 'FRONT-END/editEvent.html'));
+})
+
 router.post('/register', async (req, res, next) => {
     try {
         var { body } = req
