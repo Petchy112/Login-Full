@@ -14,7 +14,6 @@
         Topic : <p id="topic"></p>
         Description : <p id="description"></p>
         <button onclick="routeEdit()" type="submit">Edit</button>
-        <!-- <a href="/api/profile"> -->
         <a href="/api/profile">
             <button onclick="deleteEvent()" type="submit">Delete</button></a>
 
@@ -25,7 +24,7 @@
         function routeEdit() {
             const params = new URL(window.location.href).searchParams.get('id');
             console.log(params);
-            location.href = `/api/event/${params}/edit`
+            location.href = `/api/editEvent/?id=${params}`
         }
         var config = {
             method: 'GET',
