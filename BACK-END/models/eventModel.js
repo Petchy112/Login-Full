@@ -1,5 +1,9 @@
 const mongoose = require('mongoose')
 var schema = mongoose.Schema({
+    userId: {
+        type: String,
+        require: true
+    },
     topic: {
         type: String,
         require: true
@@ -7,7 +11,7 @@ var schema = mongoose.Schema({
     description: {
         type: String,
         require: false,
-        default: 'None'
+        default: 'None',
     },
 })
 
