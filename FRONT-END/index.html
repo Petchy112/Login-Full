@@ -15,8 +15,14 @@
             text-align: center;
         }
 
-        .g-signin2 {
-            text-align: center;
+        .g-signin2 :hover {
+            text-decoration: underline;
+            color: blue;
+        }
+
+        p:hover {
+            text-decoration: underline;
+            color: blue;
         }
     </style>
 
@@ -26,7 +32,7 @@
             <input type="text" id="userName" name="userName" required><br>
             <label for="pwd">Password</label><br>
             <input type="password" id="password" name="password" required><br><br>
-            <button onclick="Login()" type="submit" value="Login">Login</button>
+            <button onclick="Login()" type="submit" value="Login">Login</button></a>
         </div>
         <br><br>
         <div class="center">
@@ -34,15 +40,17 @@
                 data-layout="default" data-auto-logout-link="false" data-use-continue-as="false"
                 scope="public_profile,email" onlogin="callFB"></div>
             <br><br>
-            <div class="g-signin2" data-width="300" data-longtitle="true" data-onsuccess="callGG"></div>
+            <button disabled>
+                <div id="google" class="g-signin2" data-width="300" data-longtitle="true" data-onsuccess="callGG"></div>
+            </button>
 
-            <p onClick="location.href='/api/registerForm'">or Sign up?
+            <p onClick="location.href='/api/registerForm'">or Sign up?</p>
         </div>
     </body>
     <script>
         window.fbAsyncInit = function () {
             FB.init({
-                appId: '1218076828653725',
+                appId: '6278913185467240',
                 cookie: true,
                 xfbml: true,
                 version: 'v11.0'
@@ -64,7 +72,7 @@
                 method: 'post',
                 url: 'http://localhost:80/api/login',
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
+                    'Content-Type': 'application/json'
                 },
                 data: data
             };
@@ -72,6 +80,8 @@
             axios(config)
                 .then(function (response) {
                     console.log(response.data);
+                    alert(response.data.Message);
+                    localStorage.setItem("accessToken", response.data.accessToken);
                 })
                 .catch(function (error) {
                     console.log("error");
