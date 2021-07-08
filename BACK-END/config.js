@@ -1,5 +1,5 @@
 module.exports = config = {
-    port: 80,
+    port: 3000,
     database: {
         username: 'admin',
         password: '15918Petch',
