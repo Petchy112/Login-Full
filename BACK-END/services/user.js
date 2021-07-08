@@ -2,12 +2,13 @@ const jwt = require('jsonwebtoken');
 const config = require('../config');
 const UserAuthToken = require('../models/userAuthModel')
 const FB = require('fb')
-const sha1 = require('js-sha1')
 const generatePasswordHash = require('../help/passwordHash')
 const verifyPassword = require('../help/passwordHash')
 const { OAuth2Client } = require('google-auth-library');
 const User = require('../models/userModel');
-const client = new OAuth2Client('871927269871-tag50bhnoj696jpbc2fdhojp1ha7uqka.apps.googleusercontent.com');
+const CLIENT_ID = '871927269871-l7jthdkg3865ier49s5frnq54dcpief2.apps.googleusercontent.com'
+const client = new OAuth2Client(CLIENT_ID);
+const createError = require('http-errors')
 
 const userService = {
     async register(input) {
@@ -23,23 +24,20 @@ const userService = {
 
         var isExistEmail = await User.findOne({ email: input.email })
         if (isExistEmail) {
-            dataRes = ('The email is already use!')
-            return dataRes
+            throw createError(404, 'Email is already use')
         }
         var isExistUsername = await User.findOne({ userName: input.userName })
         if (isExistUsername) {
-            dataRes = ('Username is already use!')
-            return dataRes
+            throw createError(404, 'Username is already use')
         }
         await userdata.save();
         userdata.userId = userdata._id
         await userdata.save();
 
-
-        var dataRes = {
-            Message: 'Registered'
+        if (userdata) {
+            return { message: 'Registered' }
         }
-        return dataRes
+        return { message: 'Somgthing wrong' }
 
     },
     async login(userName, password) {
@@ -49,7 +47,7 @@ const userService = {
 
         if (thisUser) {
             if (thisUser.passwordHash !== password) {
-                console.log('Password was invalid')
+                throw createError(404, 'Password was invalid')
 
             }
             const accessTokenExpiresAt = new Date()
@@ -86,8 +84,7 @@ const userService = {
             return dataRes
         }
         else {
-            dataRes = { Message: 'Username was invalid' }
-            return dataRes
+            return createError(404, 'Username was invalid')
         }
     },
     async revokeAccessToken(accessToken) {
@@ -165,7 +162,7 @@ const userService = {
         console.log('googleLogin called', idToken)
         const ticket = await client.verifyIdToken({
             idToken: idToken,
-            audience: '871927269871-tag50bhnoj696jpbc2fdhojp1ha7uqka.apps.googleusercontent.com',
+            audience: CLIENT_ID,
         });
 
         const payload = ticket.getPayload();
@@ -208,7 +205,7 @@ const userService = {
             await googleUser.save()
         }
         resData = {
-            Message: 'Login successfully',
+            message: 'Login successfully',
             accessToken: accessToken
         }
         return resData
