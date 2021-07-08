@@ -11,7 +11,7 @@ var schema = mongoose.Schema({
     description: {
         type: String,
         require: false,
-        default: 'None',
+        default: 'None'
     },
 })
 
