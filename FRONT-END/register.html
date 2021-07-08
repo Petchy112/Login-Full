@@ -13,6 +13,15 @@
         .center {
             text-align: center;
         }
+
+        p {
+            text-align: center;
+        }
+
+        p :hover {
+            text-decoration: underline;
+            color: blue;
+        }
     </style>
 
     <body>
@@ -32,43 +41,48 @@
             Email : <input type="email" id="email" required>
 
         </div>
+        <br><br>
         <div class="center">
-            <p></p>
-            <button onclick="register()" type="submit">Register</button> <button onclick="location.href='/api/start'"
-                type="cancel">Cancel</button>
-            <p onClick="location.href='/api/start'">or Login
+            <button onclick="register()" type="submit">Register</button></a>
+            <a href="start"></a><button type="reset">Cancel</button></a>
+
         </div>
+        <p onclick="location.href='/api/start'">Sign in?</p>
 
     </body>
 
     <script>
-        async function register() {
-            var myHeaders = new Headers();
-            myHeaders.append("Content-Type", "application/json");
 
-            var raw = JSON.stringify({
-                "userName": document.getElementById('userName').value,
-                "password": document.getElementById('password').value,
-                "confirmPassword": document.getElementById('confirmPassword').value,
-                "firstName": document.getElementById('firstName').value,
-                "lastName": document.getElementById('lastName').value,
-                "phoneNumber": document.getElementById('phoneNumber').value,
-                "email": document.getElementById('email').value
+        function register() {
+            var data = JSON.stringify({
+                "userName": document.getElementById("userName").value,
+                "password": document.getElementById("password").value,
+                "confirmPassword": document.getElementById("confirmPassword").value,
+                "firstName": document.getElementById("firstName").value,
+                "lastName": document.getElementById("lastName").value,
+                "phoneNumber": document.getElementById("phoneNumber").value,
+                "email": document.getElementById("email").value,
             });
-            var requestOptions = {
+            var config = {
                 method: 'POST',
-                headers: myHeaders,
-                body: raw,
-                redirect: 'follow'
+                url: 'register',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: data
             };
 
-            await axios("http://localhost:80/api/register", requestOptions)
+            axios(config)
                 .then(response => {
-                    if (response.ok) {
-                        alert('Registered')
-                    }
-
+                    console.log(response.data);
+                    alert(response.data.message)
+                    window.location.href = 'start'
+                })
+                .catch(function (error) {
+                    console.log(error.response.data);
+                    alert(error.response.data.error.message)
                 });
+
 
 
         }

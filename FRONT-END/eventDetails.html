@@ -7,15 +7,33 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
         <title>Details</title>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     </head>
+    <style>
+        #del {
+            background: red;
+        }
+
+        .box {
+            text-align: center;
+        }
+    </style>
 
     <body>
-        Topic ID : <p id="topicId"></p>
-        Topic : <p id="topic"></p>
-        Description : <p id="description"></p>
-        <button onclick="routeEdit()" type="submit">Edit</button>
-        <a href="/api/profile">
-            <button onclick="deleteEvent()" type="submit">Delete</button></a>
+        <div class="box">
+
+            <h3 id="topic"></h3>
+
+            <p id="description"></p>
+
+            <button onclick="routeEdit()" type="submit">Edit</button>
+            <button id='del' onclick="deleteEvent()" type="submit">Delete</button>
+            <a href="/api/profile">
+                <button type="cancel">Cancel</button></a>
+        </div>
 
     </body>
     <script>
@@ -28,7 +46,7 @@
         }
         var config = {
             method: 'GET',
-            url: `http://localhost:80/api/event/${params}`,
+            url: `event/${params}`,
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem("accessToken")
             },
@@ -38,24 +56,22 @@
         axios(config)
             .then((result) => {
                 //Store
-                localStorage.setItem("topicId", result.data.result._id);
                 localStorage.setItem("topic", result.data.result.topic);
                 localStorage.setItem("description", result.data.result.description);
 
                 //Retrieve
-                document.getElementById("topicId").innerHTML = localStorage.getItem("topicId");
                 document.getElementById("topic").innerHTML = localStorage.getItem("topic");
                 document.getElementById("description").innerHTML = localStorage.getItem("description");
             })
             .catch((error) => {
-                console.log(error);
+                console.log(error.response.data.error.message);
             });
 
         function deleteEvent() {
             console.log(params);
             var config = {
                 method: 'DELETE',
-                url: `http://localhost:80/api/event/${params}`,
+                url: `event/${params}`,
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem("accessToken")
                 }
@@ -64,9 +80,10 @@
             axios(config)
                 .then(function (response) {
                     console.log(JSON.stringify(response.data));
+                    window.location.href = 'profile'
                 })
                 .catch(function (error) {
-                    console.log(error);
+                    console.log(error.response.data.error.message);
                 });
         }
     </script>
