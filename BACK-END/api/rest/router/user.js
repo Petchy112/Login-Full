@@ -99,8 +99,6 @@ router.post('/login', async (req, res, next) => {
 router.post('/logout', withAuth, async (req, res, next) => {
     try {
         const logout = await userService.revokeAccessToken(req.headers.authorization.replace('Bearer ', ''))
-
-        console.log(res.clearCookie('SAPISID'));
         res.json(logout)
 
     }
