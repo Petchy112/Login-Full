@@ -17,10 +17,10 @@
     <body>
         <div class="center">
             <label for="topic">Topic</label><br>
-            <input type="text" id="topic" name="topic"><br>
+            <input type="text" id="topic" name="topic" required><br>
             <label for="description">Description</label><br>
             <input type="" id="description" name="description"><br><br>
-            <a href="/api/profile"><button onclick="editEvent()" type="submit" value="submit">update</button></a>
+            <button onclick="editEvent()" type="submit" value="submit">update</button></a>
             <a href="/api/profile"><button type="reset">cancel</button></a>
         </div>
         <br><br>
@@ -35,8 +35,8 @@
             });
 
             var config = {
-                method: 'put',
-                url: `http://localhost:80/api/event/${params}/edit`,
+                method: 'PUT',
+                url: `/api/event/${params}/edit`,
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -44,11 +44,12 @@
             };
 
             axios(config)
-                .then(function (response) {
-                    alert(response.data);
+                .then((response) => {
+                    alert(response.data.message)
+                    window.location.href = '/api/profile'
                 })
-                .catch(function (error) {
-                    console.log(error);
+                .catch((error) => {
+                    console.log(error.response.data.error.message);
                 });
 
         }
